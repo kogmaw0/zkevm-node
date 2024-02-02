@@ -1,4 +1,4 @@
-DOCKERCOMPOSE := docker-compose -f docker-compose.yml
+DOCKERCOMPOSE := docker compose -f docker-compose.yml
 DOCKERCOMPOSEAPPSEQ := zkevm-sequencer
 DOCKERCOMPOSEAPPSEQV1TOV2 := zkevm-sequencer-v1tov2
 DOCKERCOMPOSEAPPSEQSENDER := zkevm-sequence-sender
@@ -31,6 +31,8 @@ DOCKERCOMPOSENODEAPPROVE := zkevm-approve
 DOCKERCOMPOSENODEAPPROVEV1TOV2 := zkevm-approve-v1tov2
 DOCKERCOMPOSEMETRICS := zkevm-metrics
 DOCKERCOMPOSEGRAFANA := grafana
+DOCKERCOMPOSEBRIDGEDB := zkevm-bridge-db
+DOCKERCOMPOSEBRIDGE := zkevm-bridge-service
 
 RUNSTATEDB := $(DOCKERCOMPOSE) up -d $(DOCKERCOMPOSESTATEDB)
 RUNPOOLDB := $(DOCKERCOMPOSE) up -d $(DOCKERCOMPOSEPOOLDB)
@@ -68,6 +70,9 @@ RUNAPPROVE := $(DOCKERCOMPOSE) up -d $(DOCKERCOMPOSENODEAPPROVE)
 RUNV1TOV2APPROVE := $(DOCKERCOMPOSE) up -d $(DOCKERCOMPOSENODEAPPROVEV1TOV2)
 
 RUNMETRICS := $(DOCKERCOMPOSE) up -d $(DOCKERCOMPOSEMETRICS)
+
+RUNBRIDGEDB := $(DOCKERCOMPOSE) up -d $(DOCKERCOMPOSEBRIDGEDB)
+RUNBRIDGE := $(DOCKERCOMPOSE) up -d $(DOCKERCOMPOSEBRIDGE)
 
 RUN := $(DOCKERCOMPOSE) up -d
 
@@ -371,7 +376,6 @@ run-l1-explorer: ## Runs L1 blockscan explorer
 .PHONY: run-l2-explorer
 run-l2-explorer: ## Runs L2 blockscan explorer
 	$(RUNEXPLORERL2DB)
-	$(RUNEXPLORERJSONRPC)
 	$(RUNEXPLORERL2)
 
 .PHONY: run-l2-explorer-json-rpc
@@ -569,6 +573,7 @@ run: ## Runs a full node
 	$(RUNSTATEDB)
 	$(RUNPOOLDB)
 	$(RUNEVENTDB)
+	$(RUNBRIDGEDB)
 	$(RUNL1NETWORK)
 	sleep 1
 	$(RUNZKPROVER)
@@ -582,6 +587,7 @@ run: ## Runs a full node
 	$(RUNL2GASPRICER)
 	$(RUNAGGREGATOR)
 	$(RUNJSONRPC)
+	$(RUNBRIDGE)
 
 .PHONY: run-v1tov2
 run-v1tov2: ## Runs a full node using v1tov2 network
